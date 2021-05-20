@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+    <div th:switch="${users}">
+        <h2 th:case="null">No users found!</h2>
+
+        <div th:case="*">
+            <h2>Users</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Surname</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.name}"></td>
+                        <td th:text="${user.surname}"></td>
+                        <td sec:authorize="hasRole('ADMIN')"> <a th:href="@{/admin/user-update/{id}(id=${user.id})}">Edit user</a></td>
+                        <td sec:authorize="hasRole('ADMIN')"> <a th:href="@{/admin/user-delete/{id}(id=${user.id})}">Delete user</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <p sec:authorize="hasRole('ADMIN')">
+        <a href="/admin/user-create">Create user</a>
+    </p>
+    <br>
+    <a th:href="@{/logout}">Logout</a>
+</body>
+</html>
