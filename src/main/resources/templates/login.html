@@ -1,17 +1,31 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-<div>
-    <form method="post" action="/login">
-        <input name="j_username"/>
-        <input name="j_password"/>
-        <input type="submit"/>
-    </form>
-</div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+
+        <!-- Add CMD for use BOOTSTRAP -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <form method="post" action="/login">
+                        <div class="form-group col-md-12">
+                            <label class="font-weight-bold" for="formGroupExampleInput">Please sign in</label>
+                            <input name="j_username" type="text" class="form-control" id="formGroupExampleInput" placeholder="Your name">
+                            <input name="j_password" type="password" class="form-control" id="formGroupExampleInput2" placeholder="Your password">
+                            <button type="submit" class="btn btn-primary btn-block mt-3">Sign in</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+    </body>
 </html>

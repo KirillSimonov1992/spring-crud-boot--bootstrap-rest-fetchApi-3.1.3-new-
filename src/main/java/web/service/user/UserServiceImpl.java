@@ -33,15 +33,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void create(User user) throws Exception {
         Optional<User> optUserFromDB = userDao.findUserByName(user.getName());
-        if (!optUserFromDB.isPresent()) {
+        if (optUserFromDB.isPresent()) {
             throw new UserException("User with this name exist in database");
         }
-        Set<Role> roleSet = new HashSet<>();
-        Role roleUser = roleDao.getRole("ROLE_USER");
-        roleSet.add(roleUser);
-        user.setRoles(roleSet);
-//        user.setRoles(Collections.singleton(new Role("ROLE_USER")));
-//        user.setRoles(Collections.singleton(new Role("ROLE_ADMIN")));
         userDao.create(user);
     }
 

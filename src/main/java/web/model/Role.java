@@ -1,12 +1,14 @@
 package web.model;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "roles")
+@Component
 public class Role implements GrantedAuthority {
 
     @Id
@@ -49,10 +51,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return name;
     }
 
     @Override

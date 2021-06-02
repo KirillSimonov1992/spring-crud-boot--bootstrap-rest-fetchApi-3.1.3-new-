@@ -1,14 +1,19 @@
 package web.model;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
+@Component
 public class User implements UserDetails {
 
     @Id
@@ -22,9 +27,16 @@ public class User implements UserDetails {
     private String surname;
 
     @Column
+    @Value("${user.age}")
+    private int age;
+
+    @Column
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Column
+    private String email;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -35,6 +47,27 @@ public class User implements UserDetails {
     private Boolean isActive;
 
     public User() {
+    }
+
+    public User(String name, String surname, int age, String password, String email, Set<Role> roles) {
+        this.name = name;
+        this.surname = surname;
+        this.age = age;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+        this.isActive = true;
+    }
+
+    public User(long id, String name, String surname, int age, String password, String email, Set<Role> roles) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.age = age;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+        this.isActive = true;
     }
 
     public long getId() {
@@ -61,6 +94,14 @@ public class User implements UserDetails {
         this.surname = surname;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -75,6 +116,14 @@ public class User implements UserDetails {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -107,12 +156,33 @@ public class User implements UserDetails {
         return isActive;
     }
 
+//    @Override
+//    public String toString() {
+//        return "User{ " +
+//                "name='" + name + '\'' +
+//                ", surname='" + surname + '\'' +
+//                " }";
+//    }
+
+
     @Override
     public String toString() {
-        return "User{ " +
-                "name='" + name + '\'' +
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                " }";
+                ", age=" + age +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + roles +
+                ", isActive=" + isActive +
+                '}';
+    }
+
+    public String getRolesInString() {
+        return getRoles().stream()
+                  .map(Role::toString)
+                  .collect(Collectors.joining(", "));
     }
 
 }
