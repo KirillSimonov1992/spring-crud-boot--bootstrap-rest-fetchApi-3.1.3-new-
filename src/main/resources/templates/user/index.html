@@ -31,125 +31,224 @@
 
                 <!-- Left menu -->
                 <div class="col-md-1 bg-white text-capitalize">
-                    <div class="btn-vertical" th:if="${#lists.contains(roles, 'ADMIN')}" th:each="role:${allRoles}">
-                        <button class="btn btn-link" th:text="${role}"></button>
+                    <!-- Testing switch-case various -->
+<!--                    <ul class="nav nav-pills flex-column  mb-3" id="pills-tab" role="tablist" aria-orientation="vertical">-->
+<!--                        <li class="nav-item" th:each="role, iterStat:${allRoles}" th:switch="${iterStat.index}">-->
+<!--                            <a th:case="0" class="nav-link active" th:attr="id=${'pills' + iterStat.index}" data-toggle="tab" href="#adminTab" role="tab" aria-controls="adminTab" aria-selected="true" th:text="${role}"></a>-->
+<!--                            <a th:case="*" class="nav-link" th:attr="id=${'pills' + iterStat.index}" data-toggle="tab" href="#userTab" role="tab" aria-controls="userTab" aria-selected="false" th:text="${role}"></a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+
+<!--                    <ul class="nav nav-pills flex-column mb-3" id="pills-tab" role="tablist" aria-orientation="vertical" th:if="${roles.contains('ADMIN')}">-->
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link active" id="pillAdmin" data-toggle="pill" href="#adminTab" role="tab" aria-controls="adminTab" aria-selected="true" th:text="Admin"></a>-->
+<!--                        </li>-->
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link" id="pillUser" data-toggle="pill" href="#userTab" role="tab" aria-controls="userTab" aria-selected="false" th:text="User"></a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+
+<!--                    <ul class="nav nav-pills flex-column mb-3" id="pills-tab" role="tablist" aria-orientation="vertical" th:unless="${roles.contains('ADMIN')}">-->
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link active" id="pillUser" data-toggle="pill" href="#userTab" role="tab" aria-controls="userTab" aria-selected="true" th:text="User"></a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" th:if="${roles.contains('ADMIN')}">
+                        <a class="nav-link active" id="pillAdmin" data-toggle="pill" href="#adminTab" role="tab" aria-controls="adminTab" aria-selected="true" th:text="Admin"></a>
+                        <a class="nav-link" id="pillUser" data-toggle="pill" href="#userTab" role="tab" aria-controls="userTab" aria-selected="false" th:text="User"></a>
                     </div>
-                    <div class="btn-vertical" th:if="${#lists.contains(roles, 'USER') and not #lists.contains(roles, 'ADMIN')}" th:each="role:${roles}">
-                        <button class="btn btn-link" th:text="${role}"></button>
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" th:unless="${roles.contains('ADMIN')}">
+                        <a class="nav-link active" id="pillUser" data-toggle="pill" href="#userTab" role="tab" aria-controls="userTab" aria-selected="true" th:text="User"></a>
                     </div>
                 </div>
 
 
-                <!-- Right part: table + menu -->
-                <div class="px-4 container-fluid bg-light col-md-11">
-                    <h2 th:if="${#lists.contains(roles, 'ADMIN')}">Admin panel</h2>
-                    <h2 th:if="${#lists.contains(roles, 'USER') and not #lists.contains(roles, 'ADMIN')}">User information page</h2>
-
-                    <ul class="nav nav-tabs" id="myTab" role="tablist" th:if="${#lists.contains(roles, 'ADMIN')}">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="nav-users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="true">
-                                Users table
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="nav-add-user-tab" data-toggle="tab" href="#add-user" role="tab" aria-controls="add-user" aria-selected="false">
-                                New User
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active border" id="users" role="tabpanel" aria-labelledby="nav-users-tab">
-                            <h5 class="pl-3" th:if="${#lists.contains(roles, 'ADMIN')}">All users</h5>
-                            <h5 class="pl-3" th:if="${#lists.contains(roles, 'USER') and not #lists.contains(roles, 'ADMIN')}">About user</h5>
-                            <div class="p-3 bg-white">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>First name</th>
-                                        <th>Second name</th>
-                                        <th>Age</th>
-                                        <th>Email</th>
-                                        <th>Roles</th>
-                                        <th sec:authorize="hasAuthority('ADMIN')">Edit</th>
-                                        <th sec:authorize="hasAuthority('ADMIN')">Delete</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="user:${users}">
-                                        <td th:text="${user.id}"></td>
-                                        <td th:text="${user.name}"></td>
-                                        <td th:text="${user.surname}"></td>
-                                        <td th:text="${user.age}"></td>
-                                        <td th:text="${user.email}"></td>
-                                        <td th:text="${user.getRolesInString()}"></td>
-                                        <td sec:authorize="hasAuthority('ADMIN')">
-                                            <button class="btn-info" data-toggle="modal" th:attr="data-target=${'#editModal' + user.id}">Edit</button>
-                                        </td>
-                                        <td sec:authorize="hasAuthority('ADMIN')">
-                                            <button class="btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteModal' + user.id}">Delete</button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                <div class="tab-content px-4 container-fluid bg-light col-md-11" th:if="${roles.contains('ADMIN')}">
+                    <!-- Right part: table + menu (Admin tab) -->
+                    <div id="adminTab" class="tab-pane fade show active" role="tabpanel" aria-labelledby="pillAdmin">
+                        <h2>Admin panel</h2>
+                        <ul class="nav nav-tabs" id="myTab" role="tablist" th:if="${#lists.contains(roles, 'ADMIN')}">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="nav-users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="true">
+                                    Users table
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="nav-add-user-tab" data-toggle="tab" href="#add-user" role="tab" aria-controls="add-user" aria-selected="false">
+                                    New User
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- Admin tab -->
+                            <div class="tab-pane fade show active border" id="users" role="tabpanel" aria-labelledby="nav-users-tab">
+                                <h5 class="pl-3" th:if="${#lists.contains(roles, 'ADMIN')}">All users</h5>
+                                <h5 class="pl-3" th:if="${#lists.contains(roles, 'USER') and not #lists.contains(roles, 'ADMIN')}">About user</h5>
+                                <div class="p-3 bg-white">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>First name</th>
+                                            <th>Second name</th>
+                                            <th>Age</th>
+                                            <th>Email</th>
+                                            <th>Roles</th>
+                                            <th sec:authorize="hasAuthority('ADMIN')">Edit</th>
+                                            <th sec:authorize="hasAuthority('ADMIN')">Delete</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="user:${users}">
+                                            <td th:text="${user.id}"></td>
+                                            <td th:text="${user.name}"></td>
+                                            <td th:text="${user.surname}"></td>
+                                            <td th:text="${user.age}"></td>
+                                            <td th:text="${user.email}"></td>
+                                            <td th:text="${user.getRolesInString()}"></td>
+                                            <td sec:authorize="hasAuthority('ADMIN')">
+                                                <button class="btn-info" data-toggle="modal" th:attr="data-target=${'#editModal' + user.id}">Edit</button>
+                                            </td>
+                                            <td sec:authorize="hasAuthority('ADMIN')">
+                                                <button class="btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteModal' + user.id}">Delete</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+                            <!-- Add new user -->
+                            <div class="tab-pane fade border" id="add-user" role="tabpanel" aria-labelledby="nav-add-user-tab" sec:authorize="hasAuthority('ADMIN')">
+                                <h5 class="pl-3">Add new user</h5>
+                                <div class="bg-white input-group justify-content-center">
+                                    <form class="pb-3 pt-3 w-25" id="formCreate" th:action="@{/admin/user-create}" th:method="POST">
+                                        <div class="form-group">
+                                            <div class="row justify-content-center">
+                                                <label class="font-weight-bold" for="name">First name</label>
+                                            </div>
+                                            <input type="text" class="form-control" id="name" th:name="name" placeholder="Your name">   <!!-- th:field="*{name}" -->
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row justify-content-center">
+                                                <label class="font-weight-bold" for="surname">Last name</label>
+                                            </div>
+                                            <input type="text" class="form-control" id="surname" th:name="surname" placeholder="Your surname">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row justify-content-center">
+                                                <label class="font-weight-bold" for="age">Age</label>
+                                            </div>
+                                            <input type="number" min="1" class="form-control" id="age" th:name="age" placeholder="Your age">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row justify-content-center">
+                                                <label class="font-weight-bold" for="email">Email</label>
+                                            </div>
+                                            <input type="email" class="form-control" id="email" th:name="email" placeholder="Your email">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row justify-content-center">
+                                                <label class="font-weight-bold" for="password">Password</label>
+                                            </div>
+                                            <input type="password" class="form-control" id="password" th:name="password" placeholder="Your secret code">
+                                        </div>
+                                        <!-- Selection from roles -->
+                                        <div class="form-group">
+                                            <div class="row justify-content-center">
+                                                <label class="font-weight-bold" for="selectList">Roles</label>
+                                            </div>
+                                            <div>
+                                                <select class="form-control" id="selectList" form="formCreate" th:name="selectRoles" size="2" multiple="multiple">
+                                                    <option th:each="role : ${allRoles}"  th:value="${role}" th:text="${role}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-center">
+                                            <button type="submit" class="btn btn-success" th:form="formCreate">Add new user</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
                         </div>
-                        <!-- Add new user -->
-                        <div class="tab-pane fade border" id="add-user" role="tabpanel" aria-labelledby="nav-add-user-tab" sec:authorize="hasAuthority('ADMIN')">
-                            <h5 class="pl-3">Add new user</h5>
-                            <div class="bg-white input-group justify-content-center">
-                                <form class="pb-3 pt-3 w-25" id="formCreate" th:action="@{/admin/user-create}" th:method="POST">
-                                    <div class="form-group">
-                                        <div class="row justify-content-center">
-                                            <label class="font-weight-bold" for="name">First name</label>
-                                        </div>
-                                        <input type="text" class="form-control" id="name" th:name="name" placeholder="Your name">   <!!-- th:field="*{name}" -->
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row justify-content-center">
-                                            <label class="font-weight-bold" for="surname">Last name</label>
-                                        </div>
-                                        <input type="text" class="form-control" id="surname" th:name="surname" placeholder="Your surname">
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row justify-content-center">
-                                            <label class="font-weight-bold" for="age">Age</label>
-                                        </div>
-                                        <input type="number" min="1" class="form-control" id="age" th:name="age" placeholder="Your age">
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row justify-content-center">
-                                            <label class="font-weight-bold" for="email">Email</label>
-                                        </div>
-                                        <input type="email" class="form-control" id="email" th:name="email" placeholder="Your email">
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row justify-content-center">
-                                            <label class="font-weight-bold" for="password">Password</label>
-                                        </div>
-                                        <input type="password" class="form-control" id="password" th:name="password" placeholder="Your secret code">
-                                    </div>
-                                    <!-- Selection from roles -->
-                                    <div class="form-group">
-                                        <div class="row justify-content-center">
-                                            <label class="font-weight-bold" for="selectList">Roles</label>
-                                        </div>
-                                        <div>
-                                            <select class="form-control" id="selectList" form="formCreate" th:name="selectRoles" size="2" multiple="multiple">
-                                                <option th:each="role : ${allRoles}"  th:value="${role}" th:text="${role}"></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row justify-content-center">
-                                        <button type="submit" class="btn btn-success" th:form="formCreate">Add new user</button>
-                                    </div>
-                                </form>
+
+                    </div>
+                    <!-- Right part: table + menu (User tab) -->
+                    <div id="userTab" class="tab-pane fade" role="tabpanel" aria-labelledby="pillUser">
+                        <h2>User information page</h2>
+                        <!-- User tab-content -->
+                        <div class="tab-content" id="userTabContent">
+                            <div class="tab-pane fade show active border" id="user" role="tabpanel" aria-labelledby="nav-users-tab">
+                                <h5 class="pl-3">About user</h5>
+                                <div class="p-3 bg-white">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>First name</th>
+                                            <th>Second name</th>
+                                            <th>Age</th>
+                                            <th>Email</th>
+                                            <th>Roles</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="${user.id}"></td>
+                                            <td th:text="${user.name}"></td>
+                                            <td th:text="${user.surname}"></td>
+                                            <td th:text="${user.age}"></td>
+                                            <td th:text="${user.email}"></td>
+                                            <td th:text="${user.getRolesInString()}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+
                         </div>
                     </div>
-
                 </div>
+
+                <div class="tab-content px-4 container-fluid bg-light col-md-11" th:unless="${roles.contains('ADMIN')}">
+                    <!-- Right part: table + menu (User tab) -->
+                    <div id="userTab" class="tab-pane fade show active" role="tabpanel" aria-labelledby="pillUser">
+                        <h2>User information page</h2>
+                        <!-- User tab-content -->
+                        <div class="tab-content" id="userTabContent">
+                            <div class="tab-pane fade show active border" id="user" role="tabpanel" aria-labelledby="nav-users-tab">
+                                <h5 class="pl-3">About user</h5>
+                                <div class="p-3 bg-white">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>First name</th>
+                                            <th>Second name</th>
+                                            <th>Age</th>
+                                            <th>Email</th>
+                                            <th>Roles</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="${user.id}"></td>
+                                            <td th:text="${user.name}"></td>
+                                            <td th:text="${user.surname}"></td>
+                                            <td th:text="${user.age}"></td>
+                                            <td th:text="${user.email}"></td>
+                                            <td th:text="${user.getRolesInString()}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
 
             </div>
         </div>

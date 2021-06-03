@@ -33,17 +33,16 @@ public class UserController {
 		return "login";
 	}
 
-	@GetMapping("/user/{id}")
-	public String showUser(Model model, @PathVariable Long id, Authentication authentication) {
+	@GetMapping("/user")
+	public String showUser(Model model, Authentication authentication) {
 		User loginUser = (User) userService.loadUserByUsername(authentication.getName());
 		// Email loging user
 		model.addAttribute("email", loginUser.getEmail());
 		// Roles logging user
 		List<String> collect = loginUser.getRoles().stream().map(Role::toString).sorted().collect(Collectors.toList());
 		model.addAttribute("roles", collect);
-		List<User> col = new ArrayList<>(1);
-		col.add(loginUser);
-		model.addAttribute("users", col);
+		model.addAttribute("allRoles", collect);
+		model.addAttribute("user", loginUser);
 		return "user/index";
 	}
 
@@ -59,6 +58,7 @@ public class UserController {
 		model.addAttribute("users", userService.getAll());
 		// All roles
 		model.addAttribute("allRoles", roleService.getAllRoles().stream().map(Role::toString).sorted().collect(Collectors.toList()));
+        model.addAttribute("user", loginUser);
 		return "user/index";
 	}
 
