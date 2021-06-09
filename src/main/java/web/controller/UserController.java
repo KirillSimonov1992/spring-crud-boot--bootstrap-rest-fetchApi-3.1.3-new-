@@ -1,11 +1,9 @@
 package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import web.model.Role;
 import web.model.User;
@@ -28,11 +26,6 @@ public class UserController {
 		this.roleService = roleService;
 	}
 
-	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public String loginPage() {
-		return "login";
-	}
-
 	@GetMapping("/user")
 	public String showUser(Model model, Authentication authentication) {
 		User loginUser = (User) userService.loadUserByUsername(authentication.getName());
@@ -49,23 +42,19 @@ public class UserController {
 	@GetMapping("/admin/users")
 	public String showUsers(Model model, Authentication authentication) {
 		User loginUser = (User) userService.loadUserByUsername(authentication.getName());
-		// Email loging user
-		model.addAttribute("email", loginUser.getEmail());
-		// Roles logging user
-		List<String> collect = loginUser.getRoles().stream().map(Role::toString).sorted().collect(Collectors.toList());
-		model.addAttribute("roles", collect);
-		// All users
-		model.addAttribute("users", userService.getAll());
+//		// Email loging user
+//		model.addAttribute("email", loginUser.getEmail());
+//		// All users
+//		model.addAttribute("users", userService.getAll());
 		// All roles
 		model.addAttribute("allRoles", roleService.getAllRoles().stream().map(Role::toString).sorted().collect(Collectors.toList()));
         model.addAttribute("user", loginUser);
+		// Roles logging user
+		List<String> collect = loginUser.getRoles().stream().map(Role::toString).sorted().collect(Collectors.toList());
+		model.addAttribute("roles", collect);
 		return "user/index";
 	}
 
-//	@GetMapping("/admin/user-create")
-//	public String createUserForm(User user) {
-//		return "user/user-create";
-//	}
 
 	@PostMapping("/admin/user-create")
 	public String createUser(HttpServletRequest request) throws Exception {
@@ -81,12 +70,6 @@ public class UserController {
 		userService.delete(id);
 		return "redirect:/admin/users";
 	}
-
-//	@GetMapping("/admin/user-update/{id}")
-//	public String updateUserForm(@PathVariable("id") Long id, Model model) {
-//		model.addAttribute("user", userService.get(id));
-//		return "user/user-update";
-//	}
 
 	@PostMapping("/admin/user-update")
 	public String updateUser(HttpServletRequest request) {

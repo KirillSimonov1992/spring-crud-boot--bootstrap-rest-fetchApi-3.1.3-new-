@@ -4,7 +4,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "roles")
@@ -17,17 +16,6 @@ public class Role implements GrantedAuthority {
 
     @Column
     private String name;
-
-    @ManyToMany(
-            mappedBy = "roles",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
-//    @JoinTable(
-//            name = "user_role",
-//            joinColumns = @JoinColumn(name = "role_id"),
-//            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> users;
 
     public Role() {
     }
