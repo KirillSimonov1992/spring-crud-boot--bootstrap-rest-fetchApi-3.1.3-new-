@@ -8,8 +8,6 @@ import web.model.User;
 import web.service.role.RoleService;
 import web.service.user.UserService;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +25,8 @@ public class UserRestController {
 
     @GetMapping(value = "/users/current")
     public User getAuthenticationUser(Authentication authentication) {
-        return (User) userService.loadUserByUsername(authentication.getName());
+        User user = (User) userService.loadUserByUsername(authentication.getName());
+        return user;
     }
 
     @GetMapping(value = "/users/{id}", produces = "application/json")
@@ -46,23 +45,20 @@ public class UserRestController {
         return roleService.getAllRoles();
     }
 
-    /*
-        ========================================= Проблема =================================
-     */
     @PutMapping(value = "/users", consumes = "application/json")
     public void updateUser(@RequestBody User user) {
-        System.out.println("awd");
-//        userService.update(user);
+        userService.update(user);
     }
 
-//    @PostMapping("/admin/user-create")
-//    public String createUser(HttpServletRequest request) throws Exception {
-//        User newUser = new User(request.getParameter("name"), request.getParameter("surname"),
-//                Integer.parseInt(request.getParameter("age")), request.getParameter("password"),
-//                request.getParameter("email"), parseSelectRole(request.getParameterMap().get("selectRoles")));
-//        userService.create(newUser);
-//        return "redirect:/admin/users";
-//    }
+    @PostMapping(value = "/users", consumes = "application/json")
+    public void createUser(@RequestBody User user) throws Exception {
+        userService.create(user);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public void delete(@PathVariable Long id) {
+        userService.delete(id);
+    }
 
 
 }

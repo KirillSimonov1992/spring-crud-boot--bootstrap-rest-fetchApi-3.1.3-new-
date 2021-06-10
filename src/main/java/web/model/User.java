@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -43,7 +42,7 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
     @Column
-    private Boolean isActive;
+    private Boolean active;
 
     public User() {
     }
@@ -55,7 +54,7 @@ public class User implements UserDetails {
         this.password = password;
         this.email = email;
         this.roles = roles;
-        this.isActive = true;
+        this.active = true;
     }
 
     public User(long id, String name, String surname, int age, String password, String email, Set<Role> roles) {
@@ -66,7 +65,7 @@ public class User implements UserDetails {
         this.password = password;
         this.email = email;
         this.roles = roles;
-        this.isActive = true;
+        this.active = true;
     }
 
     public long getId() {
@@ -125,6 +124,14 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -137,31 +144,23 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return isActive;
+        return active;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return isActive;
+        return active;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return isActive;
+        return active;
     }
 
     @Override
     public boolean isEnabled() {
-        return isActive;
+        return active;
     }
-
-//    @Override
-//    public String toString() {
-//        return "User{ " +
-//                "name='" + name + '\'' +
-//                ", surname='" + surname + '\'' +
-//                " }";
-//    }
 
 
     @Override
@@ -174,14 +173,9 @@ public class User implements UserDetails {
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
-                ", isActive=" + isActive +
+                ", isActive=" + active +
                 '}';
     }
 
-    public String getRolesInString() {
-        return getRoles().stream()
-                  .map(Role::toString)
-                  .collect(Collectors.joining(", "));
-    }
 
 }
