@@ -115,7 +115,7 @@
                                             </div>
                                         </div>
                                         <div class="row justify-content-center">
-                                            <button class="btn btn-success" form="formCreate" onclick="requestUser(this)">Add new user</button>
+                                            <button type="button" class="btn btn-success" form="formCreate" onclick="requestUser(this); changeTab()">Add new user</button>
                                         </div>
                                         <input type="text" name="active" value="true" readonly hidden>
                                     </form>
@@ -224,7 +224,6 @@
                 </div>
             </div>
         </div>
-
         </div>
 
         <!-- Modal window for delete user -->
@@ -291,12 +290,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" form="formDelete" class="btn btn-danger" onclick="deleteUser(this)">Delete</button>
+                        <button type="button" form="formDelete" class="btn btn-danger" data-dismiss="modal" onclick="deleteUser(this)">Delete</button>
                     </div>
                 </div>
             </div>
         </div>
-
         </div>
 
         <!-- Optional JavaScript -->

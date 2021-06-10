@@ -27,9 +27,10 @@ function fillInfoAboutUser(user) {
     }
     // Заполнение шапки страницы, информацией о пользователе
     document.querySelector('#emailAuthUser').innerText = user.email;
+    let element = document.querySelector('#roleAuthUser');
+    element.innerHTML = ''
     user.roles.forEach(role => {
-        document.querySelector('#roleAuthUser')
-            .insertAdjacentHTML('afterbegin', `<a className="font-weight-bold">${role.name} </a>`);
+        element.insertAdjacentHTML('afterbegin', `<a className="font-weight-bold">${role.name} </a>`);
     });
     // Заполнение страницы пользователя
     let tableInfoUser = document.querySelector('#bodyInfoAboutUser');
@@ -67,29 +68,33 @@ function getData(url, callback = {}) {
 /**
  * Отправка данных
  */
-function sendData(url, typeMethodHttp, data = {}, callback) {
-    fetch(url, {
+async function sendData(url, typeMethodHttp, data = {}) {
+    return fetch(url, {
         method: typeMethodHttp,
         body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(
-        callback()
-    ).catch(function(err) {
+    }).catch(function(err) {
         console.log('Ошибка загрузки: ' + err.message);
     });
 }
 
-function deleteUser(element) {
+async function deleteUser(element) {
     const form = element.form
-    sendData("/users/" + form.id.value, "Delete", {},() => {
-        /* Обновим таблицы */
-        getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
-    })
+    await sendData("/users/" + form.id.value, "Delete", {})
+    getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
 }
 
 function fillRoles() {
+    const form = document.getElementById("formCreate")
+    const collInputs = form.getElementsByTagName("input")
+    /**
+     * Первый и последний инпат служебные
+     */
+    for(var i = 1, iLength = collInputs - 1; i < iLength; i++){
+        collInputs[i].value = ""
+    }
     const select = document.querySelector(`#selectCreateUser`)
     select.innerHTML = ''
     getData(`/roles`,  (roles) => {
@@ -104,7 +109,7 @@ function fillRoles() {
  * Определяется метод по скрытому полю в форме
  * (редактирование пользователя)
  */
-function requestUser(element) {
+async function requestUser(element) {
     const form = element.form
     const typeMethodHTTP = element.form.getElementsByTagName("input")[0].value
     let body = {
@@ -118,6 +123,7 @@ function requestUser(element) {
     }
     if (typeMethodHTTP == "PUT") {
         body.id = Number(form.id.value)
+
     }
     const options = form.getElementsByTagName("select")[0].options
     for (var i = 0, iLen = options.length; i < iLen; i++) {
@@ -128,13 +134,12 @@ function requestUser(element) {
             });
         }
     }
-    sendData("/users", typeMethodHTTP, body, () => {
-        /* Обновим таблицы */
-        getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
-        if (typeMethodHTTP == "PUT") {
-            getData(URL_GET_INFO_LOGGING_USER, fillInfoAboutUser)
-        }
-    })
+    await sendData("/users", typeMethodHTTP, body)
+    /* Обновим таблицы */
+    getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
+    if (typeMethodHTTP == "PUT") {
+        getData(URL_GET_INFO_LOGGING_USER, fillInfoAboutUser)
+    }
 }
 
 function fillAdminTable(users) {
@@ -192,6 +197,10 @@ function fillModal(element) {
         })
     })
 
+}
+
+function changeTab() {
+    document.getElementById("nav-users-tab").click()
 }
 
 
