@@ -51,12 +51,12 @@ public class JpaUserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> findUserByName(String userName) {
-        List<User> users = entityManager.createQuery("select u from User u where u.name = :userName", User.class)
-                                        .setParameter("userName", userName)
+    public Optional<User> findUserByName(String email) {
+        List<User> users = entityManager.createQuery("select u from User u where u.email = :email", User.class)
+                                        .setParameter("email", email)
                                         .getResultList();
         if (users.size() > 1) {
-            throw new UserException("In database found users with same name!!!");
+            throw new UserException("In database found users with same email!!!");
         } else if (users.size() == 0) {
             return Optional.empty();
         }

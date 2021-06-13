@@ -65,8 +65,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<User> optUser = userDao.findUserByName(userName);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> optUser = userDao.findUserByName(email);
         if (!optUser.isPresent()) {
             throw new UsernameNotFoundException("This user not found");
         }

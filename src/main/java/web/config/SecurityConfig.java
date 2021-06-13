@@ -14,9 +14,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import web.config.handler.LoginSuccessHandler;
 import web.service.user.UserService;
-import web.service.user.UserServiceImpl;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -60,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/admin/**")
                 .hasAuthority("ADMIN")
-                .antMatchers("/user/**")
+                .antMatchers("/static/**")
                 .hasAnyAuthority("USER", "ADMIN");
 
         http

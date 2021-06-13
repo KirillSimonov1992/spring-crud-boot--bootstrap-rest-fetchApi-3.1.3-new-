@@ -1,7 +1,8 @@
 // URLs
-const URL_GET_INFO_LOGGING_USER = "/users/current"
-const URL_GET_INFO_ALL_USERS = "/users"
-const URL_PUT_INFO_SELECT_USERS = "http://localhost:8080/users/"
+const URL_GET_INFO_LOGGING_USER = "/api/users/current"
+const URL_GET_INFO_ALL_USERS = "/api/users"
+const URL_PUT_INFO_SELECT_USERS = "/api/users/"
+const URL_ALL_ROLES =  "/api/roles"
 
 /**
  * Заполнение компонентов зависимых от входящего юзера:
@@ -57,33 +58,15 @@ function getData(url, callback = {}) {
             'Accept': 'application/json'
         }
     }).then(function(response) {
+        if (!response.ok) {
+            return new Error("status")
+        }
         return response.json();
     }).then(function(json) {
         callback(json)
     }).catch(function(err) {
         console.log('Error download: ' + err.message);
     });
-}
-
-/**
- * Отправка данных
- */
-async function sendData(url, typeMethodHttp, data = {}) {
-    return fetch(url, {
-        method: typeMethodHttp,
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).catch(function(err) {
-        console.log('Ошибка загрузки: ' + err.message);
-    });
-}
-
-async function deleteUser(element) {
-    const form = element.form
-    await sendData("/users/" + form.id.value, "Delete", {})
-    getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
 }
 
 function fillRoles() {
@@ -97,49 +80,11 @@ function fillRoles() {
     }
     const select = document.querySelector(`#selectCreateUser`)
     select.innerHTML = ''
-    getData(`/roles`,  (roles) => {
+    getData(URL_ALL_ROLES,  (roles) => {
         roles.forEach(role => {
-            select.insertAdjacentHTML('afterbegin', `<option value="${role.id}">${role.name}</option>`);
+            select.insertAdjacentHTML('afterbegin', `<option value="${role.name}">${role.name}</option>`);
         })
     })
-}
-
-/**
- * Генерирование тела запроса для POST, PUT
- * Определяется метод по скрытому полю в форме
- * (редактирование пользователя)
- */
-async function requestUser(element) {
-    const form = element.form
-    const typeMethodHTTP = element.form.getElementsByTagName("input")[0].value
-    let body = {
-        "name": form.name.value,
-        "surname": form.surname.value,
-        "age": Number(form.age.value),
-        "email": form.email.value,
-        "password": form.password.value,
-        "active": Boolean(form.active.value),
-        "roles": []
-    }
-    if (typeMethodHTTP == "PUT") {
-        body.id = Number(form.id.value)
-
-    }
-    const options = form.getElementsByTagName("select")[0].options
-    for (var i = 0, iLen = options.length; i < iLen; i++) {
-        if (options[i].selected) {
-            body['roles'].push({
-                "id": Number(options[i].value),
-                "name": options[i].text
-            });
-        }
-    }
-    await sendData("/users", typeMethodHTTP, body)
-    /* Обновим таблицы */
-    getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
-    if (typeMethodHTTP == "PUT") {
-        getData(URL_GET_INFO_LOGGING_USER, fillInfoAboutUser)
-    }
 }
 
 function fillAdminTable(users) {
@@ -170,13 +115,16 @@ function fillAdminTable(users) {
  * @param element - Элемент модального окна из DOM
  */
 function fillModal(element) {
-    let idElement = element.id.split(" ")
-    let idUser = idElement[idElement.length - 1]
-    let idDivOutsideForm = element.getAttribute("data-target")
+    const idElement = element.id.split(" ")
+    const idUser = idElement[idElement.length - 1]
+    const idDivOutsideForm = element.getAttribute("data-target")
                                   .slice(1)
-    let form = document.querySelector(`#${idDivOutsideForm}`)
+    const form = document.querySelector(`#${idDivOutsideForm}`)
                        .getElementsByTagName('form')[0]
-    let select = form.getElementsByTagName('select')[0]
+    if (form.getAttribute("id") == "formDelete") {
+        form.action = "/admin/user-delete/" + idUser
+    }
+    const select = form.getElementsByTagName('select')[0]
     select.innerHTML = ''
     getData(URL_PUT_INFO_SELECT_USERS + idUser, (user) => {
         form.elements.id.value = user.id
@@ -186,12 +134,12 @@ function fillModal(element) {
         form.elements.email.value = user.email
         form.elements.password.value = user.password
         form.active.value = user.active;
-        getData(`/roles`,  (roles) => {
+        getData(URL_ALL_ROLES,  (roles) => {
             roles.forEach(role => {
                 if (user.roles.map(r => {return r.name;}).join(', ').includes(role.name)) {
-                    select.insertAdjacentHTML('afterbegin', `<option value="${role.id}" selected>${role.name}</option>`);
+                    select.insertAdjacentHTML('afterbegin', `<option value="${role.name}" selected>${role.name}</option>`);
                 } else {
-                    select.insertAdjacentHTML('afterbegin', `<option value="${role.id}">${role.name}</option>`);
+                    select.insertAdjacentHTML('afterbegin', `<option value="${role.name}">${role.name}</option>`);
                 }
             })
         })
@@ -199,14 +147,68 @@ function fillModal(element) {
 
 }
 
-function changeTab() {
-    document.getElementById("nav-users-tab").click()
-}
-
-
 /* Заполним компоненты зависящие от аутентифицированного пользователя */
 getData(URL_GET_INFO_LOGGING_USER, fillInfoAboutUser)
 getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
+
+/**
+ * Отправка данных
+ */
+// async function sendData(url, typeMethodHttp, data = {}) {
+//     return fetch(url, {
+//         method: typeMethodHttp,
+//         body: JSON.stringify(data),
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     }).catch(function(err) {
+//         console.log('Ошибка загрузки: ' + err.message);
+//     });
+// }
+
+// async function deleteUser(element) {
+//     const form = element.form
+//     await sendData("/users/" + form.id.value, "Delete", {})
+//     getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
+// }
+
+/**
+ * Генерирование тела запроса для POST, PUT
+ * Определяется метод по скрытому полю в форме
+ * (редактирование пользователя)
+ */
+// async function requestUser(element) {
+//     const form = element.form
+//     const typeMethodHTTP = element.form.getElementsByTagName("input")[0].value
+//     let body = {
+//         "name": form.name.value,
+//         "surname": form.surname.value,
+//         "age": Number(form.age.value),
+//         "email": form.email.value,
+//         "password": form.password.value,
+//         "active": Boolean(form.active.value),
+//         "roles": []
+//     }
+//     if (typeMethodHTTP == "PUT") {
+//         body.id = Number(form.id.value)
+//
+//     }
+//     const options = form.getElementsByTagName("select")[0].options
+//     for (var i = 0, iLen = options.length; i < iLen; i++) {
+//         if (options[i].selected) {
+//             body['roles'].push({
+//                 "id": Number(options[i].value),
+//                 "name": options[i].text
+//             });
+//         }
+//     }
+//     await sendData("/users", typeMethodHTTP, body)
+//     /* Обновим таблицы */
+//     getData(URL_GET_INFO_ALL_USERS, fillAdminTable)
+//     if (typeMethodHTTP == "PUT") {
+//         getData(URL_GET_INFO_LOGGING_USER, fillInfoAboutUser)
+//     }
+// }
 
 
 
